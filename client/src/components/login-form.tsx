@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom"
+import { toast } from "sonner";
+import axios, { AxiosError } from "axios";
 
 interface loginForm {
   email: string;
@@ -31,22 +33,17 @@ export function LoginForm({
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: loginForm) => {
-      const response = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      return response.json();
+      const response = await axios.post("http://localhost:3000/auth/login", data);
+      return response.data;
     },
-    onError: (error) => {
-      console.log(error);
+    onError: (error : AxiosError<{message: string}>) => {
+      toast.error(`${error?.response?.data?.message}`);
+      console.log(error); 
     },
-    onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
+    onSuccess: (response) => {
+      localStorage.setItem("token", response.token);
+      toast.success("Login realizado com sucesso");
       navigate("/home");
-      // console.log(data);
     },
   });
 

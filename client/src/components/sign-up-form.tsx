@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface loginForm {
   email: string;
@@ -42,10 +43,12 @@ export function SignUpForm({
       return response.json();
     },
     onError: (error) => {
+      toast.error("Erro ao fazer cadastro");
       console.log(error);
     },
     onSuccess: (data) => {
       localStorage.setItem("token", data.token);
+      toast.success("Cadastro realizado com sucesso");
       navigate("/home");
       // console.log(data);
     },

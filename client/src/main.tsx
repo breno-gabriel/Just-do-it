@@ -11,17 +11,17 @@ import LoginPage from "./pages/LoginPage.tsx";
 import NotFoundPage from "./pages/NotFoundPage.tsx";
 import SignUpPage from "./pages/SignUpPage.tsx";
 import { Toaster } from "@/components/ui/sonner";
-import ProtectedRoute from "./components/protect-route.tsx"; // Importa aqui
+import ProtectedRoute from "./components/protect-route.tsx";
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
     path: "/home",
-    element: <ProtectedRoute children={<Home />} />,  // ⛔ Protegendo essa rota
+    element: <ProtectedRoute children={<Home />} />,  
     children: [
       {
-        path: "",  // equivale a "/home"
+        path: "", 
         element: <Home />
       }
     ]

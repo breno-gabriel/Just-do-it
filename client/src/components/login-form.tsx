@@ -10,35 +10,46 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios, { AxiosError } from "axios";
+import { z } from "zod";
 
-interface loginForm {
-  email: string;
-  password: string;
-}
+const loginSchema = z.object({
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "A senha precisa ter pelo menos 6 caracteres"),
+});
+
+type LoginForm = z.infer<typeof loginSchema>;
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { register, handleSubmit } = useForm<loginForm>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+  });
+
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<loginForm> = (data) => {
+  const onSubmit: SubmitHandler<LoginForm> = (data) => {
     mutate(data);
   };
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: loginForm) => {
+    mutationFn: async (data: LoginForm) => {
       const response = await axios.post("http://localhost:3000/auth/login", data);
       return response.data;
     },
-    onError: (error : AxiosError<{message: string}>) => {
+    onError: (error: AxiosError<{ message: string }>) => {
       toast.error(`${error?.response?.data?.message}`);
-      console.log(error); 
+      console.log(error);
     },
     onSuccess: (response) => {
       localStorage.setItem("token", response.token);
@@ -64,9 +75,11 @@ export function LoginForm({
                     id="email"
                     type="email"
                     placeholder="m@example.com"
-                    required
                     {...register("email")}
                   />
+                  {errors.email && (
+                    <p className="text-red-500">{errors.email.message}</p>
+                  )}
                 </div>
                 <div className="grid gap-3">
                   <div className="flex items-center">
@@ -75,15 +88,17 @@ export function LoginForm({
                       href="#"
                       className="ml-auto text-sm underline-offset-4 hover:underline"
                     >
-                      Forgot your password?
+                      Esqueceu a senha?
                     </a>
                   </div>
                   <Input
                     id="password"
                     type="password"
-                    required
                     {...register("password")}
                   />
+                  {errors.password && (
+                    <p className="text-red-500">{errors.password.message}</p>
+                  )}
                 </div>
                 <Button
                   type="submit"

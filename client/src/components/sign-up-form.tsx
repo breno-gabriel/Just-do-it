@@ -11,14 +11,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 interface loginForm {
   email: string;
   password: string;
+  name: string;
 }
 
-export function LoginForm({
+export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -31,7 +32,7 @@ export function LoginForm({
 
   const { mutate, isPending } = useMutation({
     mutationFn: async (data: loginForm) => {
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch("http://localhost:3000/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,13 +55,23 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Bem vindo de volta</CardTitle>
-          <CardDescription>Entre com sua conta</CardDescription>
+          <CardTitle className="text-xl">Realize o seu cadastro</CardTitle>
+          <CardDescription>Prrencha os campos abaixo</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid gap-6">
               <div className="grid gap-6">
+                <div className="grid gap-3">
+                  <Label htmlFor="name">Nome Completo</Label>
+                  <Input
+                    id="name"
+                    type="name"
+                    placeholder=""
+                    required
+                    {...register("name")}
+                  />
+                </div>
                 <div className="grid gap-3">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -74,12 +85,6 @@ export function LoginForm({
                 <div className="grid gap-3">
                   <div className="flex items-center">
                     <Label htmlFor="password">Senha</Label>
-                    <a
-                      href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </a>
                   </div>
                   <Input
                     id="password"
@@ -93,13 +98,13 @@ export function LoginForm({
                   disabled={isPending}
                   className="w-full cursor-pointer"
                 >
-                  Entrar
+                  Cadastrar-se
                 </Button>
               </div>
               <div className="text-center text-sm">
-                Não tem uma conta?{" "}
-                <a href="#" className="underline underline-offset-4">
-                  Cadastre-se
+                Já tem uma conta?{" "}
+                <a href="/login" className="underline underline-offset-4">
+                  Entrar
                 </a>
               </div>
             </div>

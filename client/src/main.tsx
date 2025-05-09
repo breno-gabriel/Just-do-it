@@ -29,7 +29,7 @@ const router = createBrowserRouter([
   {
     path: "*",
     element: <NotFoundPage />,
-  },
+  }
 ]);
 
 createRoot(document.getElementById("root")!).render(
